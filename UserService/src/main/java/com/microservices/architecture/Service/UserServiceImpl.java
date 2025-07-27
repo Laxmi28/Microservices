@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.microservices.architecture.Entities.Rating;
 import com.microservices.architecture.Entities.User;
+import com.microservices.architecture.External.RatingClient;
 import com.microservices.architecture.Repository.UserRepository;
 
 @Service
@@ -20,9 +21,12 @@ public class UserServiceImpl implements UserService {
 
     private final RestTemplate restTemplate;
 
-    public UserServiceImpl(UserRepository repository,RestTemplate restTemplate){
+    private final RatingClient ratingClient;
+
+    public UserServiceImpl(UserRepository repository,RestTemplate restTemplate,RatingClient ratingClient){
         this.userRepository = repository;
         this.restTemplate = restTemplate;
+        this.ratingClient = ratingClient;
     }
 
     @Override
@@ -41,7 +45,8 @@ public class UserServiceImpl implements UserService {
              * resttemplate
              */
 
-             Rating[] rating = restTemplate.getForObject("http://RATING-SERVICE/rating/" + userId, Rating[].class);
+            //  Rating[] rating = restTemplate.getForObject("http://RATING-SERVICE/rating/" + userId, Rating[].class);
+             Rating[] rating= ratingClient.getRating(userId);
              List<Rating> ratings = Arrays.asList(rating);
              op.get().setRating(ratings);
             return op.get();
