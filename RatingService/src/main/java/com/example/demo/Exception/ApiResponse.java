@@ -1,7 +1,6 @@
-package com.microservices.architecture.Exception;
+package com.example.demo.Exception;
 
 import org.springframework.http.HttpStatusCode;
-
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,8 +10,11 @@ import lombok.Setter;
 @Setter
 @Builder
 public class ApiResponse {
+
     private String message;
     private HttpStatusCode statusCode;
     private Boolean success;
+
+
 
 }

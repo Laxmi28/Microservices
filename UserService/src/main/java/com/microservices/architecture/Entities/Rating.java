@@ -13,8 +13,11 @@ import lombok.Setter;
 @Builder
 public class Rating {
 
+    private String id;
     private int rating;
     private String feedback;
-    private String hotelName;
+    private String hotelId;
+    private String userId;
+
 
 }

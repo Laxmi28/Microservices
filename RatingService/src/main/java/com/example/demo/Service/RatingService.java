@@ -7,7 +7,8 @@ import com.example.demo.Entity.Rating;
 public interface RatingService {
      
     Rating saveRating(Rating rating);
-    Rating findRatingById(Integer id);
+    Rating findRatingById(String id);
+    List<Rating> findRatingByUserId(String userId);
     List<Rating> getAllRatings();
     
 
