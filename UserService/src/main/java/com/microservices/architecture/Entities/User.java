@@ -23,6 +23,7 @@ public class User {
     private String email;
     private String about;
     
+    /* The below field will not be persisted in the database */
     @Transient
     private List<Rating> rating;
     
