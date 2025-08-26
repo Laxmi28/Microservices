@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.microservices.architecture.Entities.User;
 import com.microservices.architecture.Service.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("/")
+@Slf4j
 public class UserController {
 
     private final UserService service;
@@ -37,11 +41,19 @@ public class UserController {
 
 
     // get user by Id
-    @GetMapping("{userId}")    
+    @GetMapping("{userId}") 
+    @CircuitBreaker(name = "ratingUserBreaker",fallbackMethod = "getUserByIdFallback")   
     public ResponseEntity<User> getUserById(@PathVariable("userId") String id){
         User userFromDb = service.findUserById(id);
         return new ResponseEntity<User>(userFromDb,HttpStatus.OK);  
 
+    }
+
+
+    public ResponseEntity<User> getUserByIdFallback(String id , Exception ex){
+        log.error("Exception occured fallback is getting implemented : {}", ex.getMessage());
+        User user = User.builder().name("dummy").email("dummy123@gmail.com").userId("DUMMY").build();
+        return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
 
