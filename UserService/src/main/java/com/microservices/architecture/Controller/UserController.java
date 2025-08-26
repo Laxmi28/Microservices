@@ -12,6 +12,7 @@ import com.microservices.architecture.Entities.User;
 import com.microservices.architecture.Service.UserService;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
 
     private final UserService service;
+
+    private int retryCount = 1;
 
     public UserController(UserService userService){
        this.service = userService;
@@ -42,8 +45,11 @@ public class UserController {
 
     // get user by Id
     @GetMapping("{userId}") 
-    @CircuitBreaker(name = "ratingUserBreaker",fallbackMethod = "getUserByIdFallback")   
+    // @CircuitBreaker(name = "ratingUserBreaker",fallbackMethod = "getUserByIdFallback")  
+    @Retry(name="ratingUserService" ,fallbackMethod ="getUserByIdFallback") 
     public ResponseEntity<User> getUserById(@PathVariable("userId") String id){
+        System.out.println("Retry count " + retryCount);
+        retryCount++;
         User userFromDb = service.findUserById(id);
         return new ResponseEntity<User>(userFromDb,HttpStatus.OK);  
 
