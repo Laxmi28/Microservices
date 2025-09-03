@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,7 @@ public class RatingController {
            return new ResponseEntity<>(ratingInDb,HttpStatus.CREATED);
     }
     
+    @PreAuthorize("hasAuthority('SCOPE_internal')")
     @GetMapping("/{userId}")
     public ResponseEntity<List<Rating>> getRatingFromUserId(@PathVariable String userId){
         List<Rating> ratingStoredInDb = ratingService.findRatingByUserId(userId);
